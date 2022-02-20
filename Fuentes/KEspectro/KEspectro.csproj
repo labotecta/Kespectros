@@ -8,8 +8,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <StartupObject>KEspectro.Program</StartupObject>
     <ApplicationIcon>picos.ico</ApplicationIcon>
-    <AssemblyVersion>1.0.3.4</AssemblyVersion>
-    <FileVersion>1.0.3.4</FileVersion>
+    <AssemblyVersion>1.0.3.5</AssemblyVersion>
+    <FileVersion>1.0.3.5</FileVersion>
     <Description>Agrupación (clustering) de espectros</Description>
     <Platforms>AnyCPU</Platforms>
     <Configurations>Debug;Release</Configurations>

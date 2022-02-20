@@ -460,7 +460,7 @@ namespace KEspectro
             float x0;
             float y0;
             contador = 0;
-            double horquilla = V_horquilla.Text.Trim().Length == 0 ? 0 : Convert.ToDouble(V_horquilla.Text.Trim());
+            double horquilla = V_horquilla.Text.Trim().Length == 0 ? 0 : Convert.ToDouble(V_horquilla.Text.Trim().Replace(principal.s_millar, principal.s_decimal));
             for (int k = 0; k < nclusters; k++)
             {
                 // En el orden de las temperaturas (Item2)

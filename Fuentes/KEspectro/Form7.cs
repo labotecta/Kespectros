@@ -204,8 +204,8 @@ namespace KEspectro
             else if (principal.calcula_hasta < 0) hasta = ndatos + principal.calcula_hasta;
             else hasta = principal.calcula_hasta;
             DibujaEjeX(g);
-            double tmin = Convert.ToDouble(V_tmin.Text.Trim());
-            double tmax = Convert.ToDouble(V_tmax.Text.Trim());
+            double tmin = Convert.ToDouble(V_tmin.Text.Trim().Replace(principal.s_millar, principal.s_decimal));
+            double tmax = Convert.ToDouble(V_tmax.Text.Trim().Replace(principal.s_millar, principal.s_decimal));
             double[][] y = new double[nclusters][];
             for (int i = 0; i < nclusters; i++)
             {

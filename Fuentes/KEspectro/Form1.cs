@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text;
 using KEspectro.Properties;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Globalization;
 
 namespace KEspectro
 {
@@ -16,6 +17,8 @@ namespace KEspectro
         public const double WIEN = 0.002898E+10;   // Para lomngitudes de onda en Ångstrom
         private readonly double[] CLASIFICACION_OM = { 7500, 6000, 5200, 3700, 0 };
         //private readonly double[] CLASIFICACION_OM = { 6400, 5500, 4800, 4000, 0 };
+        public char s_decimal;
+        public char s_millar;
         private string VERSIONAPP;
         private const int MAX_GRADO = 11;
         private const int MAX_GRADOM1 = MAX_GRADO + 1;
@@ -313,6 +316,8 @@ namespace KEspectro
         {
             VERSIONAPP = Assembly.GetExecutingAssembly().GetName().Version.ToString();
             Text = string.Format("Análisis y clasificación de espectros v: {0}", VERSIONAPP);
+            s_decimal = Convert.ToChar(CultureInfo.CurrentCulture.NumberFormat.CurrencyDecimalSeparator);
+            s_millar = Convert.ToChar(CultureInfo.CurrentCulture.NumberFormat.CurrencyGroupSeparator);
             sendaApp = Application.StartupPath;
             AyudaRapida();
             evitar = false;
@@ -389,7 +394,7 @@ namespace KEspectro
                 linea = r.ReadLine();
                 sd = linea.Split('\t');
                 intensidad = sd[2].Trim().Length == 0 ? 0 : Convert.ToInt32(sd[2]);
-                longitud_onda = Convert.ToDouble(sd[3].Trim().Replace('.', ','));
+                longitud_onda = Convert.ToDouble(sd[3].Trim().Replace(s_millar, s_decimal));
                 elemento = sd[4].Trim();
                 isotopo = sd[4].Trim() + " " + sd[1].Trim();
                 lista_elegibles_principal.Add(string.Format("{0,10:f3} {1} {2}", longitud_onda, isotopo, intensidad));
@@ -850,8 +855,8 @@ namespace KEspectro
 
                     // Se supone que sólo hay dos columnas: una es la 'x' y la otra la 'y'
 
-                    vx = Convert.ToDouble(ss[ilo]);
-                    vy = Convert.ToDouble(ss[ifj]);
+                    vx = Convert.ToDouble(ss[ilo].Replace(s_millar, s_decimal));
+                    vy = Convert.ToDouble(ss[ifj].Replace(s_millar, s_decimal));
 
                     // Cada fila contiene un sólo par x,y
 
@@ -867,7 +872,7 @@ namespace KEspectro
                         ss = linea.Split(';');
                         if (cRA != -1)
                         {
-                            AR = Convert.ToDouble(ss[cRA]);
+                            AR = Convert.ToDouble(ss[cRA].Replace(s_millar, s_decimal));
                         }
                         else
                         {
@@ -875,7 +880,7 @@ namespace KEspectro
                         }
                         if (cDEC != -1)
                         {
-                            DEC = Convert.ToDouble(ss[cDEC]);
+                            DEC = Convert.ToDouble(ss[cDEC].Replace(s_millar, s_decimal));
                         }
                         else
                         {
@@ -884,8 +889,8 @@ namespace KEspectro
                         pares_xy = decalajeF - decalajeW;
                         for (int i = 0; i < pares_xy; i++)
                         {
-                            vx = Convert.ToDouble(ss[decalajeW + i]);
-                            vy = Convert.ToDouble(ss[decalajeF + i]);
+                            vx = Convert.ToDouble(ss[decalajeW + i].Replace(s_millar, s_decimal));
+                            vy = Convert.ToDouble(ss[decalajeF + i].Replace(s_millar, s_decimal));
                             datos.Add(new Dato(i, vx, vy));
                         }
                         break;
@@ -919,9 +924,9 @@ namespace KEspectro
                 List<EspectroAnalizado> unespectro = new();
                 int grado = Convert.ToInt32(Grado.Text.Trim());
                 bool pro = Proporcional.Checked;
-                double corte = Corte.Text.Trim().Length == 0 ? 0 : Convert.ToDouble(Corte.Text.Trim());
+                double corte = Corte.Text.Trim().Length == 0 ? 0 : Convert.ToDouble(Corte.Text.Trim().Replace(s_millar, s_decimal));
                 if (Fcorte.Text.Trim().Length == 0) Fcorte.Text = Proporcional.Checked ? FC_PRO : FC_ABS;
-                double fcorte = Convert.ToDouble(Fcorte.Text.Trim());
+                double fcorte = Convert.ToDouble(Fcorte.Text.Trim().Replace(s_millar, s_decimal));
                 int distancia_movil = Movil.Text.Trim().Length == 0 ? 0 : Convert.ToInt32(Movil.Text.Trim());
                 double RYSQa = 0;
                 double RYSQb = 0;
@@ -953,7 +958,7 @@ namespace KEspectro
             string[] ss = linea.Split(';');
             if (cRA != -1)
             {
-                AR = Convert.ToDouble(ss[cRA]);
+                AR = Convert.ToDouble(ss[cRA].Replace(s_millar, s_decimal));
             }
             else
             {
@@ -961,7 +966,7 @@ namespace KEspectro
             }
             if (cDEC != -1)
             {
-                DEC = Convert.ToDouble(ss[cDEC]);
+                DEC = Convert.ToDouble(ss[cDEC].Replace(s_millar, s_decimal));
             }
             else
             {
@@ -974,8 +979,8 @@ namespace KEspectro
             int pares_xy = decalajeF - decalajeW;
             for (int i = 0; i < pares_xy; i++)
             {
-                vx = Convert.ToDouble(ss[decalajeW + i]);
-                vy = Convert.ToDouble(ss[decalajeF + i]);
+                vx = Convert.ToDouble(ss[decalajeW + i].Replace(s_millar, s_decimal));
+                vy = Convert.ToDouble(ss[decalajeF + i].Replace(s_millar, s_decimal));
                 datos.Add(new Dato(i, vx, vy));
             }
             datosex = new DatoEx(AR, DEC, datos);
@@ -1017,9 +1022,9 @@ namespace KEspectro
             List<EspectroAnalizado> unespectro = new();
             int grado = Convert.ToInt32(Grado.Text.Trim());
             bool pro = Proporcional.Checked;
-            double corte = Corte.Text.Trim().Length == 0 ? 0 : Convert.ToDouble(Corte.Text.Trim());
+            double corte = Corte.Text.Trim().Length == 0 ? 0 : Convert.ToDouble(Corte.Text.Trim().Replace(s_millar, s_decimal));
             if (Fcorte.Text.Trim().Length == 0) Fcorte.Text = Proporcional.Checked ? FC_PRO : FC_ABS;
-            double fcorte = Convert.ToDouble(Fcorte.Text.Trim());
+            double fcorte = Convert.ToDouble(Fcorte.Text.Trim().Replace(s_millar, s_decimal));
             int distancia_movil = Movil.Text.Trim().Length == 0 ? 0 : Convert.ToInt32(Movil.Text.Trim());
             double RYSQa = 0;
             double RYSQb = 0;
@@ -1084,11 +1089,11 @@ namespace KEspectro
             if (Fcorte.Text.Trim().Length == 0) Fcorte.Text = Proporcional.Checked ? FC_PRO : FC_ABS;
             if (Proporcional.Checked)
             {
-                corte = Convert.ToDouble(Fcorte.Text.Trim()) * linReg.SDVErra / (linReg.MY + linReg.MYc) * 2;
+                corte = Convert.ToDouble(Fcorte.Text.Trim().Replace(s_millar, s_decimal)) * linReg.SDVErra / (linReg.MY + linReg.MYc) * 2;
             }
             else
             {
-                corte = Convert.ToDouble(Fcorte.Text.Trim()) * linReg.SDVErra;
+                corte = Convert.ToDouble(Fcorte.Text.Trim().Replace(s_millar, s_decimal)) * linReg.SDVErra;
             }
             if (x != null && x.GetLength(1) > 0) CalculaPicos(corte);
         }
@@ -1290,7 +1295,7 @@ namespace KEspectro
                 if (!evitar) Corte.Text = string.Empty;
             }
             if (Fcorte.Text.Trim().Length == 0) Fcorte.Text = Proporcional.Checked ? FC_PRO : FC_ABS;
-            double fcorte = Convert.ToDouble(Fcorte.Text.Trim());
+            double fcorte = Convert.ToDouble(Fcorte.Text.Trim().Replace(s_millar, s_decimal));
             double margen = corte;
             for (int i = 0; i < x.GetLength(1); i++)
             {
@@ -1405,7 +1410,7 @@ namespace KEspectro
         }
         private void SelPicos_Click(object sender, EventArgs e)
         {
-            double corte = Corte.Text.Trim().Length == 0 ? 0 : Convert.ToDouble(Corte.Text.Trim());
+            double corte = Corte.Text.Trim().Length == 0 ? 0 : Convert.ToDouble(Corte.Text.Trim().Replace(s_millar, s_decimal));
             if (Fcorte.Text.Trim().Length == 0) Fcorte.Text = Proporcional.Checked ? FC_PRO : FC_ABS;
             if (x != null && x.GetLength(1) > 0) CalculaPicos(corte);
         }
@@ -1421,7 +1426,7 @@ namespace KEspectro
 
             int distancia_movil = Movil.Text.Trim().Length == 0 ? 0 : Convert.ToInt32(Movil.Text.Trim());
             if (Fcorte.Text.Trim().Length == 0) Fcorte.Text = Proporcional.Checked ? FC_PRO : FC_ABS;
-            double fcorte = Convert.ToDouble(Fcorte.Text.Trim());
+            double fcorte = Convert.ToDouble(Fcorte.Text.Trim().Replace(s_millar, s_decimal));
             double corte;
             if (Proporcional.Checked)
             {
@@ -1641,9 +1646,9 @@ namespace KEspectro
                     }
                     else
                     {
-                        R2.Text = R2.Text.Replace('.', ',');
+                        R2.Text = R2.Text.Replace(s_millar, s_decimal);
                     }
-                    double R2_min_aceptable = Convert.ToDouble(R2.Text.Trim());
+                    double R2_min_aceptable = Convert.ToDouble(R2.Text.Trim().Replace(s_millar, s_decimal));
                     Application.DoEvents();
 
                     double R2_min = double.MaxValue;
@@ -1658,7 +1663,7 @@ namespace KEspectro
 
                     double corte = 0;
                     if (Fcorte.Text.Trim().Length == 0) Fcorte.Text = Proporcional.Checked ? FC_PRO : FC_ABS;
-                    double fcorte = Convert.ToDouble(Fcorte.Text.Trim());
+                    double fcorte = Convert.ToDouble(Fcorte.Text.Trim().Replace(s_millar, s_decimal));
                     int grado;
                     int grado_ini = Convert.ToInt32(Grado.Text.Trim());
 
@@ -2180,8 +2185,8 @@ namespace KEspectro
             modo_podar = V_podar.Checked;
             if (modo_podar)
             {
-                pu_podar = Convert.ToDouble(V_ppPoda.Text.Trim()) / 100;
-                minimo_podar = Convert.ToDouble(V_veces.Text.Trim());
+                pu_podar = Convert.ToDouble(V_ppPoda.Text.Trim().Replace(s_millar, s_decimal)) / 100;
+                minimo_podar = Convert.ToDouble(V_veces.Text.Trim().Replace(s_millar, s_decimal));
                 if (minimo_podar == 0)
                 {
                     MessageBox.Show("Veces no puede ser cero");
@@ -2199,10 +2204,10 @@ namespace KEspectro
             modo_genetico = V_genetico.Checked & Convert.ToInt32(V_generaciones.Text.Trim()) > 0;
             cromosomas.Clear();
             int semilla = Convert.ToInt32(V_semilla.Text.Trim());
-            EMPEORA_MAX_MD = Convert.ToDouble(V_max_empeora_md.Text.Trim());
-            EMPEORA_MAX_DE = Convert.ToDouble(V_max_empeora_de.Text.Trim());
-            MEJORA_MIN_MD = Convert.ToDouble(V_min_mejora_md.Text.Trim());
-            MEJORA_MIN_DE = Convert.ToDouble(V_min_mejora_de.Text.Trim());
+            EMPEORA_MAX_MD = Convert.ToDouble(V_max_empeora_md.Text.Trim().Replace(s_millar, s_decimal));
+            EMPEORA_MAX_DE = Convert.ToDouble(V_max_empeora_de.Text.Trim().Replace(s_millar, s_decimal));
+            MEJORA_MIN_MD = Convert.ToDouble(V_min_mejora_md.Text.Trim().Replace(s_millar, s_decimal));
+            MEJORA_MIN_DE = Convert.ToDouble(V_min_mejora_de.Text.Trim().Replace(s_millar, s_decimal));
             calcula_desde = Convert.ToInt32(V_desde.Text.Trim());
             if (calcula_desde < 0) calcula_desde = 0;
             calcula_hasta = Convert.ToInt32(V_hasta.Text.Trim());
@@ -2608,15 +2613,15 @@ namespace KEspectro
             if (torneo)
             {
                 if (V_ppTorneo.Text.Trim().Length == 0) V_ppTorneo.Text = "10";
-                tornean = (int)(cromosomas.Count * Convert.ToDouble(V_ppTorneo.Text.Trim()));
+                tornean = (int)(cromosomas.Count * Convert.ToDouble(V_ppTorneo.Text.Trim().Replace(s_millar, s_decimal)));
             }
             mutar = V_mutar.Checked;
             if (mutar)
             {
                 if (V_ppMutar.Text.Trim().Length == 0) V_ppTorneo.Text = "5";
-                mutan_datos = (int)(ndatos * Convert.ToDouble(V_ppMutar.Text.Trim()) / 100);
+                mutan_datos = (int)(ndatos * Convert.ToDouble(V_ppMutar.Text.Trim().Replace(s_millar, s_decimal)) / 100);
                 if (V_mutarCuanto.Text.Trim().Length == 0) V_mutarCuanto.Text = "1";
-                muta_cuanto = Convert.ToDouble(V_mutarCuanto.Text.Trim()) / 100;
+                muta_cuanto = Convert.ToDouble(V_mutarCuanto.Text.Trim().Replace(s_millar, s_decimal)) / 100;
             }
             int semilla = Convert.ToInt32(V_semilla.Text.Trim());
             Random azg = new Random(semilla);
@@ -4109,19 +4114,19 @@ namespace KEspectro
 
                 // Se ignoran los 'MAX_GRADO + 1' coeficientes del ajuste polinómico
 
-                RYSQa = Convert.ToDouble(ss[3 + NCOEFICENTES]);
-                RYSQb = Convert.ToDouble(ss[4 + NCOEFICENTES]);
+                RYSQa = Convert.ToDouble(ss[3 + NCOEFICENTES].Replace(s_millar, s_decimal));
+                RYSQb = Convert.ToDouble(ss[4 + NCOEFICENTES].Replace(s_millar, s_decimal));
                 pro = ss[5 + NCOEFICENTES].Equals("1");
-                corte = Convert.ToDouble(ss[6 + NCOEFICENTES]);
-                fcorte = Convert.ToDouble(ss[7 + NCOEFICENTES]);
-                distancia_movil = Convert.ToInt32(ss[8 + NCOEFICENTES]);
-                MY = Convert.ToDouble(ss[9 + NCOEFICENTES]);
-                MYc = Convert.ToDouble(ss[10 + NCOEFICENTES]);
+                corte = Convert.ToDouble(ss[6 + NCOEFICENTES].Replace(s_millar, s_decimal));
+                fcorte = Convert.ToDouble(ss[7 + NCOEFICENTES].Replace(s_millar, s_decimal));
+                distancia_movil = Convert.ToInt32(ss[8 + NCOEFICENTES].Replace(s_millar, s_decimal));
+                MY = Convert.ToDouble(ss[9 + NCOEFICENTES].Replace(s_millar, s_decimal));
+                MYc = Convert.ToDouble(ss[10 + NCOEFICENTES].Replace(s_millar, s_decimal));
 
                 // ss[10] = picos_menos.Count y ss[11] = picos_mas.Count no se usan
 
-                AR = Convert.ToDouble(ss[13 + NCOEFICENTES]);
-                DEC = Convert.ToDouble(ss[14 + NCOEFICENTES]);
+                AR = Convert.ToDouble(ss[13 + NCOEFICENTES].Replace(s_millar, s_decimal));
+                DEC = Convert.ToDouble(ss[14 + NCOEFICENTES].Replace(s_millar, s_decimal));
                 ep = new byte[n];
                 ex = new double[n];
                 ey = new double[n];
@@ -4133,11 +4138,11 @@ namespace KEspectro
                 for (int i = 0; i < n; i++)
                 {
                     ep[i] = Convert.ToByte(ss[cdato++]);
-                    ex[i] = Convert.ToDouble(ss[cdato++]);
-                    ey[i] = yl = Convert.ToDouble(ss[cdato++]);
-                    eyc[i] = yc = Convert.ToDouble(ss[cdato++]);
+                    ex[i] = Convert.ToDouble(ss[cdato++].Replace(s_millar, s_decimal));
+                    ey[i] = yl = Convert.ToDouble(ss[cdato++].Replace(s_millar, s_decimal));
+                    eyc[i] = yc = Convert.ToDouble(ss[cdato++].Replace(s_millar, s_decimal));
                     rad_max_polinomio = Math.Max(rad_max_polinomio, yc);
-                    eSDVMovil[i] = Convert.ToDouble(ss[cdato++]);
+                    eSDVMovil[i] = Convert.ToDouble(ss[cdato++].Replace(s_millar, s_decimal));
                     switch (tipo_datosY)
                     {
                         case 0:
@@ -4257,7 +4262,7 @@ namespace KEspectro
                         eyn[i] /= rad_max_polinomio;
                     }
                 }
-                LondaMaximo = Convert.ToDouble(ss[cdato]);
+                LondaMaximo = Convert.ToDouble(ss[cdato].Replace(s_millar, s_decimal));
                 espectros.Add(new EspectroAnalizado(grado, pro, corte, fcorte, distancia_movil, RYSQa, RYSQb, MY, MYc, AR, DEC, n, ep, ex, ey, eyc, eSDVMovil, eyn, LondaMaximo, WIEN / LondaMaximo));
                 contador++;
                 if (contador % 100 == 0)
@@ -4358,10 +4363,10 @@ namespace KEspectro
                 {
                     linea = sr.ReadLine();
                     ss = linea.Split(';');
-                    x_centroides_leidos[ind_dato] = Convert.ToDouble(ss[0]);
+                    x_centroides_leidos[ind_dato] = Convert.ToDouble(ss[0].Replace(s_millar, s_decimal));
                     for (int ind_cluster = 0; ind_cluster < ncentroides; ind_cluster++)
                     {
-                        centroides_leidos[ind_cluster][ind_dato] = Convert.ToDouble(ss[1 + ind_cluster]);
+                        centroides_leidos[ind_cluster][ind_dato] = Convert.ToDouble(ss[1 + ind_cluster].Replace(s_millar, s_decimal));
                     }
                     ind_dato++;
                 }
@@ -5281,8 +5286,8 @@ namespace KEspectro
                     if (mutar)
                     {
                         sw.WriteLine("Mutaciones");
-                        sw.WriteLine(string.Format("{0:f2}% de los genes", Convert.ToDouble(V_ppMutar.Text.Trim())));
-                        sw.WriteLine(string.Format("{0:f2}% de su valor", Convert.ToDouble(V_mutarCuanto.Text.Trim())));
+                        sw.WriteLine(string.Format("{0:f2}% de los genes", Convert.ToDouble(V_ppMutar.Text.Trim().Replace(s_millar, s_decimal))));
+                        sw.WriteLine(string.Format("{0:f2}% de su valor", Convert.ToDouble(V_mutarCuanto.Text.Trim().Replace(s_millar, s_decimal))));
                         switch (minimiza_genetico)
                         {
                             case 0:
@@ -5319,10 +5324,10 @@ namespace KEspectro
                 if (V_modoCentroide.Text.Equals("0")) sw.WriteLine("Centroides como media");
                 else sw.WriteLine("Centroides como valor máximo");
                 sw.WriteLine(V_silhouette.Checked ? string.Empty : "Sin calcular índice silhouette");
-                sw.WriteLine(string.Format("Max retroceso en la media;{0:f2}%", 100 * Convert.ToDouble(V_max_empeora_md.Text.Trim())));
-                sw.WriteLine(string.Format("Mejora mínima en la media;{0:f2}%", 100 * Convert.ToDouble(V_min_mejora_md.Text.Trim())));
-                sw.WriteLine(string.Format("Max retroceso en la D.est;{0:f2}%", 100 * Convert.ToDouble(V_max_empeora_de.Text.Trim())));
-                sw.WriteLine(string.Format("Mejora mínima en la D.est;{0:f2}%", 100 * Convert.ToDouble(V_min_mejora_de.Text.Trim())));
+                sw.WriteLine(string.Format("Max retroceso en la media;{0:f2}%", 100 * Convert.ToDouble(V_max_empeora_md.Text.Trim().Replace(s_millar, s_decimal))));
+                sw.WriteLine(string.Format("Mejora mínima en la media;{0:f2}%", 100 * Convert.ToDouble(V_min_mejora_md.Text.Trim().Replace(s_millar, s_decimal))));
+                sw.WriteLine(string.Format("Max retroceso en la D.est;{0:f2}%", 100 * Convert.ToDouble(V_max_empeora_de.Text.Trim().Replace(s_millar, s_decimal))));
+                sw.WriteLine(string.Format("Mejora mínima en la D.est;{0:f2}%", 100 * Convert.ToDouble(V_min_mejora_de.Text.Trim().Replace(s_millar, s_decimal))));
                 sw.WriteLine();
                 sw.WriteLine("--------------------------------");
 
@@ -6274,8 +6279,8 @@ namespace KEspectro
             modo_podar = V_podar.Checked;
             if (modo_podar)
             {
-                pu_podar = Convert.ToDouble(V_ppPoda.Text.Trim()) / 100;
-                minimo_podar = Convert.ToDouble(V_veces.Text.Trim());
+                pu_podar = Convert.ToDouble(V_ppPoda.Text.Trim().Replace(s_millar, s_decimal)) / 100;
+                minimo_podar = Convert.ToDouble(V_veces.Text.Trim().Replace(s_millar, s_decimal));
                 if (minimo_podar == 0)
                 {
                     MessageBox.Show("Veces no puede ser cero");
